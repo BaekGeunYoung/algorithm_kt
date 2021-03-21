@@ -19,7 +19,7 @@ fun main() {
 
         if (command.startsWith("push")) {
             val value = command.split(" ")[1].toInt()
-            q.push(value)
+            q.pushBack(value)
         }
         else if (command.startsWith("pop")) {
             if (q.isEmpty()) stdOut.write("-1\n")
@@ -33,11 +33,11 @@ fun main() {
         }
         else if (command.startsWith("front")) {
             if (q.isEmpty()) stdOut.write("-1\n")
-            else stdOut.write("${q.getFirst()}\n")
+            else stdOut.write("${q.getFront()}\n")
         }
         else if (command.startsWith("back")) {
             if (q.isEmpty()) stdOut.write("-1\n")
-            else stdOut.write("${q.getLast()}\n")
+            else stdOut.write("${q.getBack()}\n")
         }
         else error("unreachable code")
     }
@@ -50,15 +50,8 @@ class MyDeque {
     var front: Node<Int>? = null
     var back: Node<Int>? = null
 
-    fun push(e: Int) {
-        if (size == 0) {
-            val newNode = Node(e)
-            front = newNode
-            back = newNode
-            front!!.prev = newNode
-            front!!.next = newNode
-            size++
-        }
+    fun pushBack(e: Int) {
+        if (size == 0) emptyPush(e)
 
         else {
             val newNode = Node(e)
@@ -69,9 +62,30 @@ class MyDeque {
         }
     }
 
-    fun getLast(): Int = back?.value ?: -1
+    fun pushFront(e: Int) {
+        if (size == 0) emptyPush(e)
 
-    fun getFirst(): Int = front?.value ?: -1
+        else {
+            val newNode = Node(e)
+            front!!.next = newNode
+            newNode.prev = front
+            front = newNode
+            size++
+        }
+    }
+
+    private fun emptyPush(e: Int) {
+        val newNode = Node(e)
+        front = newNode
+        back = newNode
+        front!!.prev = newNode
+        front!!.next = newNode
+        size++
+    }
+
+    fun getBack(): Int = back?.value ?: -1
+
+    fun getFront(): Int = front?.value ?: -1
 
     fun isEmpty(): Boolean = size == 0
 
@@ -92,6 +106,29 @@ class MyDeque {
 
             newFront.next = null
             front = newFront
+            size--
+
+            return value
+        }
+    }
+
+    fun pollBack(): Int {
+        if (isEmpty()) return -1
+
+        if (size == 1) {
+            val value = back!!.value
+            front = null
+            back = null
+            size--
+
+            return value
+        }
+        else {
+            val newBack = back!!.next!!
+            val value = back!!.value
+
+            newBack.prev = null
+            back = newBack
             size--
 
             return value
