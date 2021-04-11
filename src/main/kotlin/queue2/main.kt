@@ -50,6 +50,8 @@ class MyDeque {
     var front: Node<Int>? = null
     var back: Node<Int>? = null
 
+    var flag: String = "front"
+
     fun pushBack(e: Int) {
         if (size == 0) emptyPush(e)
 
@@ -78,8 +80,6 @@ class MyDeque {
         val newNode = Node(e)
         front = newNode
         back = newNode
-        front!!.prev = newNode
-        front!!.next = newNode
         size++
     }
 
@@ -133,6 +133,45 @@ class MyDeque {
 
             return value
         }
+    }
+
+    fun pollByFlag(): Int =
+        if (flag == "front") pollFront()
+        else pollBack()
+
+    fun reverse() {
+        flag =
+            if (flag == "front") "back"
+            else "front"
+    }
+
+    override fun toString(): String {
+        var result = "["
+
+        if (flag == "front") {
+            var curr = front
+
+            while (curr != back) {
+                result += "${curr!!.value},"
+                curr = curr.prev
+            }
+
+            if (curr != null) result += curr.value
+        }
+        else {
+            var curr = back
+
+            while (curr != front) {
+                result += "${curr!!.value},"
+                curr = curr.next
+            }
+
+            if (curr != null) result += curr.value
+        }
+
+        result += "]"
+
+        return result
     }
 }
 
